@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Membresías de Gimnasio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Membresías de Gimnasio</h1>
+        <form id="membershipForm">
+            <label for="name">Nombre:</label>
+            <input type="text" id="name" required>
+
+            <label for="amount">Mensualidad:</label>
+            <input type="number" id="amount" required>
+
+            <label for="startDate">Fecha de Registro:</label>
+            <input type="date" id="startDate" required>
+
+            <button type="submit">Registrar</button>
+        </form>
+
+        <h2>Listado de Membresías</h2>
+        <table id="membershipTable" border="1">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Mensualidad</th>
+                    <th>Fecha de Vencimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Las filas se añadirán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>const memberships = [];
+
+        function checkExpirations() {
+            const today = new Date();
+            memberships.forEach(member => {
+                const expirationDate = new Date(member.expiration);
+                if (expirationDate <= today) {
+                    alert(`La mensualidad de ${member.name} ha vencido el ${expirationDate.toLocaleDateString()}.`);
+                }
+            });
+        }
+        
+        document.getElementById('membershipForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+        
+            const name = document.getElementById('name').value;
+            const amount = document.getElementById('amount').value;
+            const startDate = new Date(document.getElementById('startDate').value);
+            const expirationDate = new Date(startDate);
+            expirationDate.setMonth(expirationDate.getMonth() + 1); // Añadir un mes
+        
+            memberships.push({ name, amount, expiration: expirationDate });
+        
+            const tableBody = document.getElementById('membershipTable').querySelector('tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${name}</td>
+                <td>${amount}</td>
+                <td>${expirationDate.toLocaleDateString()}</td>
+            `;
+            tableBody.appendChild(newRow);
+        
+            // Limpiar el formulario
+            document.getElementById('membershipForm').reset();
+        
+            // Verificar vencimientos
+            checkExpirations();
+        });
+        
+        // Verificar vencimientos al cargar la página
+        window.onload = checkExpirations;
+        </script>
+</body>
+</html>
